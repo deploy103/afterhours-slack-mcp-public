@@ -1,0 +1,32 @@
+[Unit]
+Description=Standalone after-hours Slack MCP
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+WorkingDirectory=/srv/apps/afterhours-slack-mcp
+StateDirectory=afterhours-slack-mcp
+StateDirectoryMode=0700
+UMask=0077
+LoadCredential=mcp-token:/etc/afterhours-slack-mcp/mcp-token
+LoadCredential=slack-config:/etc/afterhours-slack-mcp/config.json
+# Add these lines ONLY after parent provisions the two files:
+# LoadCredential=slack-token:/etc/afterhours-slack-mcp/slack-token
+# LoadCredential=slack-signing-secret:/etc/afterhours-slack-mcp/slack-signing-secret
+Environment=SLACK_CONFIG=%d/slack-config
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/srv/apps/afterhours-slack-mcp/.venv/bin/uvicorn server:app_factory --factory --host 127.0.0.1 --port 8002 --proxy-headers --forwarded-allow-ips=127.0.0.1 --no-access-log
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+
+[Install]
+WantedBy=multi-user.target

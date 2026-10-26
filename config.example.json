@@ -1,0 +1,7 @@
+{
+  "slack_team_id": null,
+  "slack_owner_id": null,
+  "slack_rooms": [],
+  "slack_send_enabled": false,
+  "owner_alert_enabled": false
+}
